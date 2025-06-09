@@ -48,7 +48,7 @@ namespace Hospisim.Controllers
         // GET: Profissionals/Create
         public IActionResult Create()
         {
-            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Id");
+            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Nome");
             return View();
         }
 
@@ -66,7 +66,7 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Id", profissional.EspecialidadeId);
+            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Nome", profissional.EspecialidadeId);
             return View(profissional);
         }
 
@@ -83,7 +83,7 @@ namespace Hospisim.Controllers
             {
                 return NotFound();
             }
-            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Id", profissional.EspecialidadeId);
+            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Nome", profissional.EspecialidadeId);
             return View(profissional);
         }
 
@@ -119,7 +119,7 @@ namespace Hospisim.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Id", profissional.EspecialidadeId);
+            ViewData["EspecialidadeId"] = new SelectList(_context.Especialidades, "Id", "Nome", profissional.EspecialidadeId);
             return View(profissional);
         }
 
