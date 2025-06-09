@@ -1,6 +1,64 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Política de Privacidade";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!-- Container principal com espaçamento e largura definidos -->
+<div class="w-full max-w-4xl mx-auto px-4 py-16 sm:py-24">
+
+    <!-- Conteúdo da Política de Privacidade -->
+    <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg p-8 md:p-12 backdrop-blur-sm">
+
+        <!-- Título da Página -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">@ViewData["Title"]</span>
+            </h1>
+            <p class="mt-3 text-lg text-gray-400">Última atualização: 09 de junho de 2025</p>
+        </div>
+
+        <!-- Corpo do Texto -->
+        <div class="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
+            <p>
+                Bem-vindo à Política de Privacidade do sistema <strong>Hospisim</strong>. A sua privacidade é de extrema importância para nós. Esta página descreve como as informações dos usuários são coletadas, usadas, mantidas e protegidas dentro do nosso sistema de gestão clínica para o Hospital Vida Plena.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-100 border-l-4 border-pink-400 pl-4">1. Coleta de Informações</h2>
+            <p>
+                O Hospisim coleta informações necessárias para a gestão eficaz dos serviços de saúde, incluindo, mas не se limitando a:
+            </p>
+            <ul>
+                <li><strong>Dados de Pacientes:</strong> Informações de identificação pessoal (nome, data de nascimento, contato), histórico médico, resultados de exames e registros de atendimento.</li>
+                <li><strong>Dados de Profissionais de Saúde:</strong> Informações de identificação e credenciais profissionais para gerenciamento de escalas e acesso ao sistema.</li>
+                <li><strong>Dados de Uso do Sistema:</strong> Registros de acesso (logs), atividades realizadas na plataforma e informações técnicas do dispositivo para fins de segurança e melhoria do serviço.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-100 border-l-4 border-pink-400 pl-4">2. Uso das Informações</h2>
+            <p>
+                As informações coletadas são utilizadas exclusivamente para os seguintes propósitos:
+            </p>
+            <ul>
+                <li>Prestação e melhoria dos serviços de gestão hospitalar.</li>
+                <li>Garantia da segurança do sistema e proteção contra acessos não autorizados.</li>
+                <li>Comunicação entre profissionais de saúde e administração do hospital.</li>
+                <li>Cumprimento de obrigações legais e regulatórias do setor de saúde.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-100 border-l-4 border-pink-400 pl-4">3. Segurança dos Dados</h2>
+            <p>
+                Empregamos as melhores práticas de segurança para proteger os seus dados. Todas as informações são armazenadas em ambientes seguros, com controle de acesso restrito e criptografia de dados sensíveis, tanto em trânsito quanto em repouso. Nenhuma informação pessoal será compartilhada com terceiros sem o consentimento prévio e explícito do titular, exceto quando exigido por lei.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-100 border-l-4 border-pink-400 pl-4">4. Contato</h2>
+            <p>
+                Caso tenha dúvidas sobre esta política de privacidade ou sobre como seus dados são tratados, entre em contato com o administrador do sistema através dos canais oficiais do Hospital Vida Plena.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos para o conteúdo de texto (prose) -->
+<style>
+    .prose-invert ul > li::marker {
+        color: #ec4899; /* Cor rosa para os marcadores da lista */
+    }
+</style>

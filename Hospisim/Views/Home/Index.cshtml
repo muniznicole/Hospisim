@@ -1,8 +1,97 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOSPISIM - Home</title>
+    <!-- Incluindo o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Definindo a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Gradiente sutil no fundo */
+        .bg-gradient-main {
+            background-color: #111827; /* Cor de fallback */
+            background-image: radial-gradient(circle at top, rgba(236, 72, 153, 0.1), transparent 40%), radial-gradient(circle at bottom, rgba(139, 92, 246, 0.1), transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-main text-white min-h-screen">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <!-- Container principal com espaçamento superior para "empurrar" o conteúdo para baixo -->
+    <div class="w-full max-w-6xl mx-auto px-4 py-24 sm:py-32">
+
+        <!-- Bloco de código do ASP.NET Core MVC (não visual) -->
+        @{
+            ViewData["Title"] = "Home Page";
+        }
+
+        <!-- Seção de Boas-Vindas -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
+                Bem-vindo ao <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">HOSPISIM</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+                Gestão Clínica Inteligente para o Hospital Vida Plena.
+            </p>
+        </div>
+
+        <!-- Grid de Acesso Rápido -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <!-- Card 1: Pacientes -->
+            <a href="/Pacientes" class="group bg-gray-900/50 p-6 rounded-xl border border-gray-700/60 shadow-lg hover:border-pink-500/80 hover:-translate-y-2 transition-all duration-300 backdrop-blur-sm">
+                <div class="flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg w-12 h-12 mb-5 transform group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-100">Gerenciar Pacientes</h3>
+                <p class="text-gray-400 text-sm">Adicione, edite e visualize os registros de todos os pacientes.</p>
+            </a>
+
+            <!-- Card 2: Profissionais -->
+            <a href="/Profissionals" class="group bg-gray-900/50 p-6 rounded-xl border border-gray-700/60 shadow-lg hover:border-pink-500/80 hover:-translate-y-2 transition-all duration-300 backdrop-blur-sm">
+                <div class="flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg w-12 h-12 mb-5 transform group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-100">Corpo Clínico</h3>
+                <p class="text-gray-400 text-sm">Gerencie os profissionais de saúde, suas especialidades e horários.</p>
+            </a>
+
+            <!-- Card 3: Atendimentos -->
+            <a href="/Atendimentos" class="group bg-gray-900/50 p-6 rounded-xl border border-gray-700/60 shadow-lg hover:border-pink-500/80 hover:-translate-y-2 transition-all duration-300 backdrop-blur-sm">
+                <div class="flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg w-12 h-12 mb-5 transform group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-100">Consultar Atendimentos</h3>
+                <p class="text-gray-400 text-sm">Visualize o histórico de atendimentos, exames e prescrições.</p>
+            </a>
+
+            <!-- Card 4: Especialidades -->
+            <a href="/Especialidades" class="group bg-gray-900/50 p-6 rounded-xl border border-gray-700/60 shadow-lg hover:border-pink-500/80 hover:-translate-y-2 transition-all duration-300 backdrop-blur-sm">
+                <div class="flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg w-12 h-12 mb-5 transform group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-100">Especialidades</h3>
+                <p class="text-gray-400 text-sm">Gerencie as especialidades médicas disponíveis no hospital.</p>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>

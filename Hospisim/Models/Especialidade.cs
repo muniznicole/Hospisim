@@ -11,7 +11,7 @@ namespace Hospisim.Models
 
         public string Nome { get; set; }
 
-        public ICollection<Profissional> Profissionais { get; set; }
+        public ICollection<Profissional>? Profissionais { get; set; }
     }
 }
 

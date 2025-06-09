@@ -1,49 +1,68 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Hospisim</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Hospisim.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - HOSPISIM</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Estilos Personalizados -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-gradient-main {
+            background-color: #111827; /* Cor base (Azul-escuro/cinza) */
+            background-image: radial-gradient(circle at top left, rgba(236, 72, 153, 0.08), transparent 35%), radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.08), transparent 40%);
+        }
+
+        .brand-gradient {
+            background-image: linear-gradient(to right, #ec4899, #a855f7); /* Gradiente de Rosa para Roxo */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hospisim</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+<body class="bg-gradient-main text-gray-300 min-h-screen flex flex-col">
+
+    <!-- Cabeçalho -->
+    <header class="bg-gray-900/50 border-b border-gray-700/60 backdrop-blur-sm sticky top-0 z-50">
+        <nav class="container mx-auto flex justify-between items-center p-4">
+            <!-- Logo/Nome da Aplicação -->
+            <a class="text-2xl font-bold brand-gradient" asp-area="" asp-controller="Home" asp-action="Index">
+                HOSPISIM
+            </a>
+            <!-- Links de Navegação -->
+            <div class="space-x-6">
+                <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-area="" asp-controller="Home" asp-action="Index">Início</a>
+                <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-area="" asp-controller="Especialidades" asp-action="Index">Especialidades</a>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Hospisim - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Conteúdo Principal da Página -->
+    <main role="main" class="flex-grow">
+        <!-- O conteúdo das suas views (como a home com os cards) será renderizado aqui -->
+        @RenderBody()
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-gray-900/50 border-t border-gray-700/60 mt-12 py-6">
+        <div class="container mx-auto text-center text-gray-400 text-sm">
+            &copy; 2025 - Hospisim | Desenvolvido por: Nicole Muniz | <a class="font-medium text-pink-400 hover:text-pink-300 transition-colors" asp-area="" asp-controller="Home" asp-action="Privacy">Política de Privacidade</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Seção para Scripts -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
