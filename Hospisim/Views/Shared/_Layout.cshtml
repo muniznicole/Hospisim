@@ -5,27 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HOSPISIM</title>
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Estilos Personalizados -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
 
         .bg-gradient-main {
-            background-color: #111827; /* Cor base (Azul-escuro/cinza) */
+            background-color: #111827;
             background-image: radial-gradient(circle at top left, rgba(236, 72, 153, 0.08), transparent 35%), radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.08), transparent 40%);
         }
 
         .brand-gradient {
-            background-image: linear-gradient(to right, #ec4899, #a855f7); /* Gradiente de Rosa para Roxo */
+            background-image: linear-gradient(to right, #ec4899, #a855f7);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -37,33 +33,32 @@
     <!-- Cabeçalho -->
     <header class="bg-gray-900/50 border-b border-gray-700/60 backdrop-blur-sm sticky top-0 z-50">
         <nav class="container mx-auto flex justify-between items-center p-4">
-            <!-- Logo/Nome da Aplicação -->
-            <a class="text-2xl font-bold brand-gradient" asp-area="" asp-controller="Home" asp-action="Index">
+            <!-- Logo -->
+            <a class="text-2xl font-bold brand-gradient" asp-controller="Home" asp-action="Index">
                 HOSPISIM
             </a>
+
             <!-- Links de Navegação -->
-            <div class="space-x-6">
-                <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-area="" asp-controller="Home" asp-action="Index">Início</a>
-                <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-area="" asp-controller="Especialidades" asp-action="Index">Especialidades</a>
-                <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-area="" asp-controller="Profissionals" asp-action="Index">Corpo Clínico</a>
+            <div class="flex items-center space-x-6 text-sm">
+                <a class="hover:text-white transition-colors" asp-controller="Pacientes" asp-action="Index">Atendimento</a>
+                <a class="hover:text-white transition-colors" asp-controller="Profissionals" asp-action="Index">Administrativo</a>
             </div>
         </nav>
     </header>
 
-    <!-- Conteúdo Principal da Página -->
+    <!-- Conteúdo Principal -->
     <main role="main" class="flex-grow">
-        <!-- O conteúdo das suas views (como a home com os cards) será renderizado aqui -->
         @RenderBody()
     </main>
 
     <!-- Rodapé -->
-    <footer class="bg-gray-900/50 border-t border-gray-700/60 mt-12 py-6">
+    <footer class="bg-gray-900/50 border-t border-gray-700/60 mt-auto py-6">
         <div class="container mx-auto text-center text-gray-400 text-sm">
-            &copy; 2025 - Hospisim | Desenvolvido por: Nicole Muniz | <a class="font-medium text-pink-400 hover:text-pink-300 transition-colors" asp-area="" asp-controller="Home" asp-action="Privacy">Política de Privacidade</a>
+            &copy; @DateTime.Now.Year - Hospisim | Desenvolvido por: Nicole Muniz |
+            <a class="font-medium text-pink-400 hover:text-pink-300" asp-controller="Home" asp-action="Privacy">Política de Privacidade</a>
         </div>
     </footer>
 
-    <!-- Seção para Scripts -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
