@@ -1,84 +1,102 @@
 ﻿@model Hospisim.Models.Paciente
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Paciente";
 }
 
-<h1>Details</h1>
+<!-- Container principal que se alinha com o layout geral -->
+<div class="w-full max-w-4xl mx-auto px-4 py-16 sm:py-24">
 
-<div>
-    <h4>Paciente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NomeCompleto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NomeCompleto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CPF)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CPF)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sexo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sexo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoSanguineo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoSanguineo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EnderecoCompleto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EnderecoCompleto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroCartaoSUS)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroCartaoSUS)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstadoCivil)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstadoCivil)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PossuiPlanoSaude)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PossuiPlanoSaude)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <!-- Card de conteúdo -->
+    <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden">
+
+        <!-- Cabeçalho do Card -->
+        <div class="p-6 md:p-8 border-b border-gray-800/60">
+            <h1 class="text-2xl md:text-3xl font-bold text-center">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">
+                    @ViewData["Title"]
+                </span>
+            </h1>
+        </div>
+
+        <!-- Detalhes do Item -->
+        <div class="p-6 md:p-8">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Nome Completo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.NomeCompleto)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">CPF</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.CPF)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Data de Nascimento</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Model.DataNascimento.ToShortDateString()</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Sexo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.Sexo)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Tipo Sanguíneo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.TipoSanguineo)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Estado Civil</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.EstadoCivil)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Telefone</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.Telefone)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Email</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.Email)</dd>
+                </div>
+                <div class="md:col-span-2 p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Endereço Completo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.EnderecoCompleto)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Número do Cartão SUS</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">@Html.DisplayFor(model => model.NumeroCartaoSUS)</dd>
+                </div>
+                <div class="p-4 bg-gray-800/40 rounded-lg">
+                    <dt class="text-sm font-medium text-gray-400">Possui Plano de Saúde?</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-100">
+                        @if (Model.PossuiPlanoSaude)
+                        {
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                                Sim
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-700/50 text-gray-300">
+                                Não
+                            </span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Rodapé com Botões de Ação -->
+        <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center">
+            <a asp-action="Index" class="inline-flex items-center text-gray-300 hover:text-white transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Voltar para a Lista
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="cursor-pointer inline-flex items-center justify-center bg-yellow-500/80 hover:bg-yellow-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-px">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                </svg>
+                Editar
+            </a>
+        </div>
+    </div>
 </div>

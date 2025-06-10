@@ -1,84 +1,137 @@
 ﻿@model Hospisim.Models.Paciente
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Paciente";
 }
 
-<h1>Edit</h1>
+<!-- Container principal que se alinha com o layout geral -->
+<div class="w-full max-w-5xl mx-auto px-4 py-16 sm:py-24">
 
-<h4>Paciente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="NomeCompleto" class="control-label"></label>
-                <input asp-for="NomeCompleto" class="form-control" />
-                <span asp-validation-for="NomeCompleto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CPF" class="control-label"></label>
-                <input asp-for="CPF" class="form-control" />
-                <span asp-validation-for="CPF" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataNascimento" class="control-label"></label>
-                <input asp-for="DataNascimento" class="form-control" />
-                <span asp-validation-for="DataNascimento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sexo" class="control-label"></label>
-                <input asp-for="Sexo" class="form-control" />
-                <span asp-validation-for="Sexo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoSanguineo" class="control-label"></label>
-                <input asp-for="TipoSanguineo" class="form-control" />
-                <span asp-validation-for="TipoSanguineo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone" class="control-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EnderecoCompleto" class="control-label"></label>
-                <input asp-for="EnderecoCompleto" class="form-control" />
-                <span asp-validation-for="EnderecoCompleto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroCartaoSUS" class="control-label"></label>
-                <input asp-for="NumeroCartaoSUS" class="form-control" />
-                <span asp-validation-for="NumeroCartaoSUS" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EstadoCivil" class="control-label"></label>
-                <input asp-for="EstadoCivil" class="form-control" />
-                <span asp-validation-for="EstadoCivil" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PossuiPlanoSaude" /> @Html.DisplayNameFor(model => model.PossuiPlanoSaude)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+    <!-- Formulário dentro do Card -->
+    <form asp-action="Edit">
+        <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden">
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <!-- Cabeçalho do Card -->
+            <div class="p-6 md:p-8 border-b border-gray-800/60">
+                <h1 class="text-2xl md:text-3xl font-bold text-center">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">
+                        @ViewData["Title"]
+                    </span>
+                </h1>
+            </div>
+
+            <!-- Corpo do Formulário -->
+            <div class="p-6 md:p-8">
+
+                <!-- Bloco para exibir erros de validação -->
+                <div asp-validation-summary="ModelOnly" class="text-red-400 bg-red-500/10 p-4 rounded-lg text-sm space-y-1 mb-6"></div>
+
+                <!-- Campo oculto para o ID -->
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Grid de campos do formulário -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+
+                    <!-- Dados Pessoais -->
+                    <div class="md:col-span-2">
+                        <label asp-for="NomeCompleto" class="block text-sm font-medium text-gray-300 mb-2">Nome Completo</label>
+                        <input asp-for="NomeCompleto" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="NomeCompleto" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="CPF" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <input asp-for="CPF" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="CPF" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DataNascimento" class="block text-sm font-medium text-gray-300 mb-2">Data de Nascimento</label>
+                        <input asp-for="DataNascimento" type="date" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="DataNascimento" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Sexo -->
+                    <div>
+                        <label asp-for="Sexo" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <select asp-for="Sexo" asp-items="Html.GetEnumSelectList<Sexo>()"
+                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <option value="">Selecione</option>
+                        </select>
+                        <span asp-validation-for="Sexo" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Tipo Sanguíneo -->
+                    <div>
+                        <label asp-for="TipoSanguineo" class="block text-sm font-medium text-gray-300 mb-2">Tipo Sanguíneo</label>
+                        <select asp-for="TipoSanguineo" asp-items="Html.GetEnumSelectList<TipoSanguineo>()"
+                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <option value="">Selecione</option>
+                        </select>
+                        <span asp-validation-for="TipoSanguineo" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Contato -->
+                    <div>
+                        <label asp-for="Telefone" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <input asp-for="Telefone" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="Telefone" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Email" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <input asp-for="Email" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="Email" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="EnderecoCompleto" class="block text-sm font-medium text-gray-300 mb-2">Endereço Completo</label>
+                        <input asp-for="EnderecoCompleto" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500" />
+                        <span asp-validation-for="EnderecoCompleto" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Documentos e outros -->
+                    <div>
+                        <label asp-for="NumeroCartaoSUS" class="block text-sm font-medium text-gray-300 mb-2">Nº Cartão SUS</label>
+                        <input asp-for="NumeroCartaoSUS" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500" />
+                        <span asp-validation-for="NumeroCartaoSUS" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Estado Civil -->
+                    <div>
+                        <label asp-for="EstadoCivil" class="block text-sm font-medium text-gray-300 mb-2">Estado Civil</label>
+                        <select asp-for="EstadoCivil" asp-items="Html.GetEnumSelectList<EstadoCivil>()"
+                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            <option value="">Selecione</option>
+                        </select>
+                        <span asp-validation-for="EstadoCivil" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div class="md:col-span-2 flex items-center pt-4">
+                        <label asp-for="PossuiPlanoSaude" class="block text-sm font-medium text-gray-300 mr-4">Possui Plano de Saúde?</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" asp-for="PossuiPlanoSaude" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-700 rounded-full peer peer-focus:ring-2 peer-focus:ring-pink-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé com Botões de Ação -->
+            <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center">
+                <a asp-action="Index" class="inline-flex items-center text-gray-300 hover:text-white transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    Voltar para a Lista
+                </a>
+                <input type="submit" value="Salvar Alterações" class="cursor-pointer inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all" />
+            </div>
+
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

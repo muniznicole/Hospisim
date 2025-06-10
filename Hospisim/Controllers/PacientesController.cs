@@ -56,6 +56,17 @@ namespace Hospisim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,NomeCompleto,CPF,DataNascimento,Sexo,TipoSanguineo,Telefone,Email,EnderecoCompleto,NumeroCartaoSUS,EstadoCivil,PossuiPlanoSaude")] Paciente paciente)
         {
+            if (!ModelState.IsValid)
+            {
+                foreach (var entry in ModelState)
+                {
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        Console.WriteLine($"Erro em {entry.Key}: {error.ErrorMessage}");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 paciente.Id = Guid.NewGuid();
@@ -63,7 +74,11 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            Console.WriteLine($"Sexo: {paciente.Sexo}, Tipo: {paciente.TipoSanguineo}, Estado: {paciente.EstadoCivil}");
+
             return View(paciente);
+
         }
 
         // GET: Pacientes/Edit/5
