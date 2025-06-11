@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
@@ -11,20 +12,28 @@ namespace Hospisim.Models
         public Guid Id { get; set; }
 
         public DateTime DataHora { get; set; }
-        public string Tipo { get; set; } // emergência, consulta, internação
-        public string Status { get; set; } // realizado, em andamento, cancelado
+        public TipoAtendimento Tipo { get; set; } // emergência, consulta, internação
+        public StatusAtendimento Status { get; set; } // realizado, em andamento, cancelado
         public string Local { get; set; } // exemplo: sala 01
 
         public Guid ProntuarioId { get; set; }
-        public Prontuario Prontuario { get; set; }
+
+        [ValidateNever]
+        public Prontuario? Prontuario { get; set; }
 
         public Guid ProfissionalId { get; set; }
-        public Profissional Profissional { get; set; }
+        
+        [ValidateNever]
+        public Profissional? Profissional { get; set; }
 
-        public ICollection<Prescricao> Prescricoes { get; set; }
-        public ICollection<Exame> Exames { get; set; }
+        [ValidateNever]
+        public ICollection<Prescricao>? Prescricoes { get; set; }
+        
+        [ValidateNever]
+        public ICollection<Exame>? Exames { get; set; }
 
-        public Internacao Internacao { get; set; }
+        [ValidateNever]
+        public Internacao? Internacao { get; set; }
     }
 }
 

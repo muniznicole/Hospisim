@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,89 +18,125 @@ namespace Hospisim.Controllers
             _context = context;
         }
 
-        // GET: Atendimentoes
-        public async Task<IActionResult> Index()
+        // GET: Atendimentoes/PorProntuario
+        public async Task<IActionResult> PorProntuario(Guid prontuarioId)
         {
-            var hospisimContext = _context.Atendimentos.Include(a => a.Profissional).Include(a => a.Prontuario);
-            return View(await hospisimContext.ToListAsync());
+            var prontuario = await _context.Prontuarios
+                .Include(p => p.Paciente)
+                .FirstOrDefaultAsync(p => p.Id == prontuarioId);
+
+            if (prontuario == null) return NotFound();
+
+            ViewBag.ProntuarioId = prontuario.Id;
+            ViewBag.PacienteId = prontuario.PacienteId;
+            ViewBag.PacienteNome = prontuario.Paciente.NomeCompleto;
+            ViewBag.ProntuarioNumero = prontuario.Numero;
+
+            var atendimentos = await _context.Atendimentos
+                .Include(a => a.Profissional)
+                    .ThenInclude(p => p.Especialidade)
+                .Where(a => a.ProntuarioId == prontuarioId)
+                .ToListAsync();
+
+            return View("Index", atendimentos);
         }
 
-        // GET: Atendimentoes/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        // GET: Atendimentoes/Create
+        public IActionResult Create(Guid prontuarioId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var prontuario = _context.Prontuarios
+                .Include(p => p.Paciente)
+                .FirstOrDefault(p => p.Id == prontuarioId);
 
-            var atendimento = await _context.Atendimentos
-                .Include(a => a.Profissional)
-                .Include(a => a.Prontuario)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (atendimento == null)
+            if (prontuario == null) return NotFound();
+
+            ViewBag.ProntuarioId = prontuario.Id;
+            ViewBag.PacienteNome = prontuario.Paciente.NomeCompleto;
+            ViewBag.ProntuarioNumero = prontuario.Numero;
+            ViewBag.ProfissionalId = new SelectList(
+                _context.Profissionais
+                    .Include(p => p.Especialidade)
+                    .Select(p => new {
+                        p.Id,
+                        NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
+                    }).ToList(),
+                "Id", "NomeCompleto"
+            );
+
+            var atendimento = new Atendimento
             {
-                return NotFound();
-            }
+                ProntuarioId = prontuarioId,
+                DataHora = DateTime.Now,
+                Status = StatusAtendimento.EmAndamento
+            };
 
             return View(atendimento);
         }
 
-        // GET: Atendimentoes/Create
-        public IActionResult Create()
-        {
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id");
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "Id", "Id");
-            return View();
-        }
-
         // POST: Atendimentoes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DataHora,Tipo,Status,Local,ProntuarioId,ProfissionalId")] Atendimento atendimento)
+        public async Task<IActionResult> Create([Bind("DataHora,Tipo,Status,Local,ProntuarioId,ProfissionalId")] Atendimento atendimento)
         {
             if (ModelState.IsValid)
             {
                 atendimento.Id = Guid.NewGuid();
-                _context.Add(atendimento);
+                _context.Atendimentos.Add(atendimento);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("PorProntuario", new { prontuarioId = atendimento.ProntuarioId });
             }
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", atendimento.ProfissionalId);
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "Id", "Id", atendimento.ProntuarioId);
+
+            var prontuario = await _context.Prontuarios
+                .Include(p => p.Paciente)
+                .FirstOrDefaultAsync(p => p.Id == atendimento.ProntuarioId);
+
+            ViewBag.ProntuarioId = atendimento.ProntuarioId;
+            ViewBag.PacienteNome = prontuario?.Paciente?.NomeCompleto ?? "Paciente";
+            ViewBag.ProntuarioNumero = prontuario?.Numero ?? "N/A";
+            ViewBag.ProfissionalId = new SelectList(
+                _context.Profissionais
+                    .Include(p => p.Especialidade)
+                    .Select(p => new {
+                        p.Id,
+                        NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
+                    }).ToList(),
+                "Id", "NomeCompleto",
+                atendimento.ProfissionalId
+            );
+
             return View(atendimento);
         }
 
         // GET: Atendimentoes/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var atendimento = await _context.Atendimentos.FindAsync(id);
-            if (atendimento == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", atendimento.ProfissionalId);
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "Id", "Id", atendimento.ProntuarioId);
+            var atendimento = await _context.Atendimentos
+                .Include(a => a.Prontuario)
+                    .ThenInclude(p => p.Paciente)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (atendimento == null) return NotFound();
+
+            ViewBag.ProfissionalId = new SelectList(
+                _context.Profissionais.Include(p => p.Especialidade),
+                "Id", "NomeCompleto", atendimento.ProfissionalId);
+
+            // ✅ Preencher nome e número do prontuário para exibir no topo da view
+            ViewBag.PacienteNome = atendimento.Prontuario?.Paciente?.NomeCompleto ?? "Paciente";
+            ViewBag.ProntuarioNumero = atendimento.Prontuario?.Numero ?? "N/A";
+            ViewBag.ProntuarioId = atendimento.ProntuarioId;
+
             return View(atendimento);
         }
 
         // POST: Atendimentoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,DataHora,Tipo,Status,Local,ProntuarioId,ProfissionalId")] Atendimento atendimento)
         {
-            if (id != atendimento.Id)
-            {
-                return NotFound();
-            }
+            if (id != atendimento.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -112,40 +147,59 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AtendimentoExists(atendimento.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AtendimentoExists(atendimento.Id)) return NotFound();
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("PorProntuario", new { prontuarioId = atendimento.ProntuarioId });
             }
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", atendimento.ProfissionalId);
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "Id", "Id", atendimento.ProntuarioId);
+
+            ViewBag.ProfissionalId = new SelectList(
+                _context.Profissionais
+                    .Include(p => p.Especialidade)
+                    .Select(p => new {
+                        p.Id,
+                        NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
+                    }).ToList(),
+                "Id", "NomeCompleto",
+                atendimento.ProfissionalId
+            );
+
             return View(atendimento);
         }
+
+        // GET: Atendimentoes/Details/5
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null) return NotFound();
+
+            var atendimento = await _context.Atendimentos
+                .Include(a => a.Profissional)
+                    .ThenInclude(p => p.Especialidade)
+                .Include(a => a.Prontuario)
+                    .ThenInclude(p => p.Paciente)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (atendimento == null) return NotFound();
+
+            ViewBag.PacienteNome = atendimento.Prontuario?.Paciente?.NomeCompleto ?? "Paciente";
+            ViewBag.ProntuarioNumero = atendimento.Prontuario?.Numero ?? "N/A";
+
+            return View(atendimento);
+        }
+
 
         // GET: Atendimentoes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var atendimento = await _context.Atendimentos
                 .Include(a => a.Profissional)
+                    .ThenInclude(p => p.Especialidade)
                 .Include(a => a.Prontuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (atendimento == null)
-            {
-                return NotFound();
-            }
 
-            return View(atendimento);
+            return atendimento == null ? NotFound() : View(atendimento);
         }
 
         // POST: Atendimentoes/Delete/5
@@ -157,10 +211,10 @@ namespace Hospisim.Controllers
             if (atendimento != null)
             {
                 _context.Atendimentos.Remove(atendimento);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("PorProntuario", new { prontuarioId = atendimento.ProntuarioId });
         }
 
         private bool AtendimentoExists(Guid id)
