@@ -63,13 +63,14 @@
                                 @item.ObservacoesGerais
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                                <!-- O botão principal agora leva para os atendimentos -->
-                                <a asp-controller="Atendimentos" asp-action="Index" asp-route-prontuarioId="@item.Id" title="Ver Atendimentos" class="inline-flex items-center bg-blue-500/80 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <a asp-controller="Atendimentos" asp-action="Index" asp-route-prontuarioId="@item.Id" title="Ver Atendimentos" class="inline-flex items-center justify-center w-9 h-9 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
                                         <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
                                     </svg>
-                                    Atendimentos
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" title="Detalhes" class="inline-flex items-center justify-center w-9 h-9 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-full transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Editar" class="inline-flex items-center justify-center w-9 h-9 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10 rounded-full transition-all">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,85 +18,91 @@ namespace Hospisim.Controllers
             _context = context;
         }
 
-        // GET: Prontuarios
+        // ✅ Lista geral (opcional)
         public async Task<IActionResult> Index()
         {
-            var hospisimContext = _context.Prontuarios.Include(p => p.Paciente);
-            return View(await hospisimContext.ToListAsync());
+            var prontuarios = await _context.Prontuarios
+                .Include(p => p.Paciente)
+                .ToListAsync();
+            return View(prontuarios);
         }
 
-        // GET: Prontuarios/Details/5
+        // ✅ Lista filtrada por paciente (sem conflito de rota)
+        [HttpGet]
+        [ActionName("PorPaciente")]
+        public async Task<IActionResult> PorPaciente(Guid pacienteId)
+        {
+            var paciente = await _context.Pacientes.FindAsync(pacienteId);
+            if (paciente == null) return NotFound();
+
+            ViewBag.PacienteNome = paciente.NomeCompleto;
+            ViewBag.PacienteId = paciente.Id;
+
+            var prontuarios = await _context.Prontuarios
+                .Where(p => p.PacienteId == pacienteId)
+                .ToListAsync();
+
+            return View("PorPaciente", prontuarios);
+        }
+
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var prontuario = await _context.Prontuarios
-                .Include(p => p.Paciente)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prontuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(prontuario);
+            if (id == null) return NotFound();
+            var prontuario = await _context.Prontuarios.Include(p => p.Paciente).FirstOrDefaultAsync(p => p.Id == id);
+            return prontuario == null ? NotFound() : View(prontuario);
         }
 
-        // GET: Prontuarios/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid pacienteId)
         {
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Id");
-            return View();
+            var paciente = _context.Pacientes.Find(pacienteId);
+            if (paciente == null) return NotFound();
+
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", pacienteId);
+            ViewBag.PacienteNome = paciente.NomeCompleto;
+
+            return View(new Prontuario { PacienteId = pacienteId });
         }
 
-        // POST: Prontuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Numero,DataAbertura,ObservacoesGerais,PacienteId")] Prontuario prontuario)
+        public async Task<IActionResult> Create([Bind("ObservacoesGerais,PacienteId")] Prontuario prontuario)
         {
             if (ModelState.IsValid)
             {
                 prontuario.Id = Guid.NewGuid();
+                prontuario.DataAbertura = DateTime.Now;
+                prontuario.Numero = $"PRT-{DateTime.Now:yyyyMMddHHmmss}";
+
                 _context.Add(prontuario);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("PorPaciente", new { pacienteId = prontuario.PacienteId });
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Id", prontuario.PacienteId);
+
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", prontuario.PacienteId);
             return View(prontuario);
         }
 
-        // GET: Prontuarios/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var prontuario = await _context.Prontuarios.FindAsync(id);
-            if (prontuario == null)
-            {
-                return NotFound();
-            }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Id", prontuario.PacienteId);
+            var prontuario = await _context.Prontuarios
+                .Include(p => p.Paciente) // necessário para acessar prontuario.Paciente.NomeCompleto
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prontuario == null) return NotFound();
+
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", prontuario.PacienteId);
+            ViewBag.PacienteNome = prontuario.Paciente?.NomeCompleto; // aqui 👈
+
             return View(prontuario);
         }
 
-        // POST: Prontuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Numero,DataAbertura,ObservacoesGerais,PacienteId")] Prontuario prontuario)
         {
-            if (id != prontuario.Id)
-            {
-                return NotFound();
-            }
+            if (id != prontuario.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -108,41 +113,27 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProntuarioExists(prontuario.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ProntuarioExists(prontuario.Id)) return NotFound();
+                    else throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("PorPaciente", new { pacienteId = prontuario.PacienteId });
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Id", prontuario.PacienteId);
+
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", prontuario.PacienteId);
             return View(prontuario);
         }
 
-        // GET: Prontuarios/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var prontuario = await _context.Prontuarios
-                .Include(p => p.Paciente)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prontuario == null)
-            {
-                return NotFound();
-            }
+            var prontuario = await _context.Prontuarios.Include(p => p.Paciente).FirstOrDefaultAsync(p => p.Id == id);
+            if (prontuario == null) return NotFound();
 
+            ViewBag.PacienteNome = prontuario.Paciente?.NomeCompleto;
             return View(prontuario);
         }
 
-        // POST: Prontuarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -151,9 +142,8 @@ namespace Hospisim.Controllers
             if (prontuario != null)
             {
                 _context.Prontuarios.Remove(prontuario);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
