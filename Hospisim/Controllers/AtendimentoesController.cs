@@ -177,6 +177,8 @@ namespace Hospisim.Controllers
                     .ThenInclude(p => p.Especialidade)
                 .Include(a => a.Prontuario)
                     .ThenInclude(p => p.Paciente)
+                .Include(a => a.Prescricoes)
+                    .ThenInclude(p => p.Profissional)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (atendimento == null) return NotFound();

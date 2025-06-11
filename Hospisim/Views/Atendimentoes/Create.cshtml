@@ -7,25 +7,13 @@
     var prontuarioId = ViewBag.ProntuarioId;
 }
 
+<!-- Container principal que se alinha com o layout geral -->
 <div class="w-full max-w-5xl mx-auto px-4 py-16 sm:py-24">
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="text-red-400 bg-red-900/20 p-4 mb-4 rounded-lg">
-            <strong>ModelState inválido:</strong>
-            <ul>
-                @foreach (var entry in ViewData.ModelState)
-                {
-                    foreach (var error in entry.Value.Errors)
-                    {
-                        <li><strong>@entry.Key:</strong> @error.ErrorMessage</li>
-                    }
-                }
-            </ul>
-        </div>
-    }
+
     <form asp-action="Create">
         <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden">
 
+            <!-- Cabeçalho do Card -->
             <div class="p-6 md:p-8 border-b border-gray-800/60">
                 <h1 class="text-2xl md:text-3xl font-bold text-center">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">
@@ -37,50 +25,47 @@
                 </p>
             </div>
 
+            <!-- Corpo do Formulário -->
             <div class="p-6 md:p-8">
-                <div asp-validation-summary="ModelOnly" class="text-red-400 bg-red-500/10 p-4 rounded-lg text-sm mb-6"></div>
+                <div asp-validation-summary="ModelOnly" class="text-red-400 bg-red-500/10 p-4 rounded-lg text-sm space-y-1 mb-6"></div>
 
+                <!-- Campos Ocultos para IDs e valores padrão -->
                 <input type="hidden" asp-for="ProntuarioId" value="@prontuarioId" />
-                <input type="hidden" asp-for="Status" /> <!-- Status = EmAndamento automaticamente -->
+                <input type="hidden" asp-for="Status" value="@StatusAtendimento.EmAndamento" />
+                <input type="hidden" asp-for="Tipo" value="@TipoAtendimento.Consulta" />
 
+                <!-- Grid de campos do formulário -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                     <div>
-                        <label asp-for="DataHora" class="block text-sm font-medium text-gray-300 mb-2">Data e Hora</label>
+                        <label asp-for="DataHora" class="block text-sm font-medium text-gray-300 mb-2">Data e Hora do Atendimento</label>
                         <input asp-for="DataHora" type="datetime-local"
-                               class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white"
-                               value="@Model.DataHora.ToString("yyyy-MM-ddTHH:mm")" />
-                        <span asp-validation-for="DataHora" class="text-sm text-red-400"></span>
+                               class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                               value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                        <span asp-validation-for="DataHora" class="mt-2 text-sm text-red-400"></span>
                     </div>
 
-                    <div>
-                        <label asp-for="Tipo" class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
-                        <select asp-for="Tipo" asp-items="Html.GetEnumSelectList<TipoAtendimento>()"
-                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white">
-                            <option value="">-- Selecione o Tipo --</option>
-                        </select>
-                        <span asp-validation-for="Tipo" class="text-sm text-red-400"></span>
+                    <div class="md:col-span-1">
+                        <label asp-for="Local" class="block text-sm font-medium text-gray-300 mb-2">Local do Atendimento</label>
+                        <input asp-for="Local" placeholder="Ex: Consultório 5, Leito 102A"
+                               class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="Local" class="text-sm text-red-400"></span>
                     </div>
 
                     <div class="md:col-span-2">
                         <label asp-for="ProfissionalId" class="block text-sm font-medium text-gray-300 mb-2">Profissional Responsável</label>
                         <select asp-for="ProfissionalId" asp-items="ViewBag.ProfissionalId"
-                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white">
+                                class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500">
                             <option value="">-- Selecione o Profissional --</option>
                         </select>
-                        <span asp-validation-for="ProfissionalId" class="text-sm text-red-400"></span>
+                        <span asp-validation-for="ProfissionalId" class="mt-2 text-sm text-red-400"></span>
                     </div>
 
-                    <div class="md:col-span-2">
-                        <label asp-for="Local" class="block text-sm font-medium text-gray-300 mb-2">Local</label>
-                        <input asp-for="Local" placeholder="Ex: Consultório 5, Leito 102A"
-                               class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white" />
-                        <span asp-validation-for="Local" class="text-sm text-red-400"></span>
-                    </div>
                 </div>
             </div>
 
-            <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center">
-                <a asp-action="PorProntuario" asp-route-prontuarioId="@prontuarioId"
+            <!-- Rodapé com Botões de Ação -->
+            <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center mt-6">
+                <a asp-action="Index" asp-route-prontuarioId="@prontuarioId"
                    class="text-sm inline-flex items-center text-gray-300 hover:text-white transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -88,7 +73,7 @@
                     Voltar
                 </a>
                 <input type="submit" value="Registrar Atendimento"
-                       class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all" />
+                       class="cursor-pointer bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all" />
             </div>
         </div>
     </form>

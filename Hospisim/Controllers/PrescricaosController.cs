@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Hospisim.Data;
 using Hospisim.Models;
@@ -19,57 +17,52 @@ namespace Hospisim.Controllers
             _context = context;
         }
 
-        // GET: Prescricaos
-        public async Task<IActionResult> Index()
+        // GET: Prescricaos/Create?atendimentoId=...
+        public IActionResult Create(Guid atendimentoId)
         {
-            var hospisimContext = _context.Prescricoes.Include(p => p.Atendimento).Include(p => p.Profissional);
-            return View(await hospisimContext.ToListAsync());
-        }
+            var atendimento = _context.Atendimentos
+                .Include(a => a.Profissional)
+                .FirstOrDefault(a => a.Id == atendimentoId);
 
-        // GET: Prescricaos/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
+            if (atendimento == null)
                 return NotFound();
-            }
 
-            var prescricao = await _context.Prescricoes
-                .Include(p => p.Atendimento)
-                .Include(p => p.Profissional)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prescricao == null)
+            ViewBag.AtendimentoId = atendimento.Id;
+            ViewBag.ProfissionalId = atendimento.ProfissionalId;
+            ViewBag.ProfissionalNome = atendimento.Profissional.NomeCompleto;
+
+            var prescricao = new Prescricao
             {
-                return NotFound();
-            }
+                AtendimentoId = atendimento.Id,
+                ProfissionalId = atendimento.ProfissionalId,
+                DataInicio = DateTime.Now,
+                StatusPrescricao = Models.Enums.StatusPrescricao.Ativa
+            };
 
             return View(prescricao);
         }
 
-        // GET: Prescricaos/Create
-        public IActionResult Create()
-        {
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id");
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id");
-            return View();
-        }
-
         // POST: Prescricaos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AtendimentoId,ProfissionalId,Medicamento,Dosagem,Frequencia,ViaAdministracao,DataInicio,DataFim,Observacoes,StatusPrescricao,ReacoesAdversas")] Prescricao prescricao)
+        public async Task<IActionResult> Create(Prescricao prescricao)
         {
             if (ModelState.IsValid)
             {
                 prescricao.Id = Guid.NewGuid();
                 _context.Add(prescricao);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Atendimentoes", new { id = prescricao.AtendimentoId });
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", prescricao.AtendimentoId);
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", prescricao.ProfissionalId);
+
+            var atendimento = await _context.Atendimentos
+                .Include(a => a.Profissional)
+                .FirstOrDefaultAsync(a => a.Id == prescricao.AtendimentoId);
+
+            ViewBag.AtendimentoId = atendimento?.Id;
+            ViewBag.ProfissionalId = atendimento?.ProfissionalId;
+            ViewBag.ProfissionalNome = atendimento?.Profissional?.NomeCompleto;
+
             return View(prescricao);
         }
 
@@ -77,31 +70,22 @@ namespace Hospisim.Controllers
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var prescricao = await _context.Prescricoes.FindAsync(id);
             if (prescricao == null)
-            {
                 return NotFound();
-            }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", prescricao.AtendimentoId);
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", prescricao.ProfissionalId);
+
             return View(prescricao);
         }
 
         // POST: Prescricaos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,AtendimentoId,ProfissionalId,Medicamento,Dosagem,Frequencia,ViaAdministracao,DataInicio,DataFim,Observacoes,StatusPrescricao,ReacoesAdversas")] Prescricao prescricao)
+        public async Task<IActionResult> Edit(Guid id, Prescricao prescricao)
         {
             if (id != prescricao.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -113,18 +97,13 @@ namespace Hospisim.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!PrescricaoExists(prescricao.Id))
-                    {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Details", "Atendimentoes", new { id = prescricao.AtendimentoId });
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", prescricao.AtendimentoId);
-            ViewData["ProfissionalId"] = new SelectList(_context.Profissionais, "Id", "Id", prescricao.ProfissionalId);
+
             return View(prescricao);
         }
 
@@ -132,20 +111,14 @@ namespace Hospisim.Controllers
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var prescricao = await _context.Prescricoes
                 .Include(p => p.Atendimento)
                 .Include(p => p.Profissional)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (prescricao == null)
-            {
-                return NotFound();
-            }
 
-            return View(prescricao);
+            return prescricao == null ? NotFound() : View(prescricao);
         }
 
         // POST: Prescricaos/Delete/5
@@ -154,13 +127,15 @@ namespace Hospisim.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var prescricao = await _context.Prescricoes.FindAsync(id);
+            var atendimentoId = prescricao?.AtendimentoId;
+
             if (prescricao != null)
             {
                 _context.Prescricoes.Remove(prescricao);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Atendimentoes", new { id = atendimentoId });
         }
 
         private bool PrescricaoExists(Guid id)

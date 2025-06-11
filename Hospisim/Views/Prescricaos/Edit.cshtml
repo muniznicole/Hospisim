@@ -1,84 +1,114 @@
 ﻿@model Hospisim.Models.Prescricao
+@using Hospisim.Models.Enums
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Prescrição";
+    var profissionalNome = ViewBag.ProfissionalNome ?? "Profissional";
+    var atendimentoId = ViewBag.AtendimentoId;
 }
 
-<h1>Edit</h1>
+<!-- Container principal que se alinha com o layout geral -->
+<div class="w-full max-w-4xl mx-auto px-4 py-16 sm:py-24">
 
-<h4>Prescricao</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="AtendimentoId" class="control-label"></label>
-                <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId"></select>
-                <span asp-validation-for="AtendimentoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProfissionalId" class="control-label"></label>
-                <select asp-for="ProfissionalId" class="form-control" asp-items="ViewBag.ProfissionalId"></select>
-                <span asp-validation-for="ProfissionalId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Medicamento" class="control-label"></label>
-                <input asp-for="Medicamento" class="form-control" />
-                <span asp-validation-for="Medicamento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Dosagem" class="control-label"></label>
-                <input asp-for="Dosagem" class="form-control" />
-                <span asp-validation-for="Dosagem" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Frequencia" class="control-label"></label>
-                <input asp-for="Frequencia" class="form-control" />
-                <span asp-validation-for="Frequencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ViaAdministracao" class="control-label"></label>
-                <input asp-for="ViaAdministracao" class="form-control" />
-                <span asp-validation-for="ViaAdministracao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataInicio" class="control-label"></label>
-                <input asp-for="DataInicio" class="form-control" />
-                <span asp-validation-for="DataInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataFim" class="control-label"></label>
-                <input asp-for="DataFim" class="form-control" />
-                <span asp-validation-for="DataFim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observacoes" class="control-label"></label>
-                <input asp-for="Observacoes" class="form-control" />
-                <span asp-validation-for="Observacoes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StatusPrescricao" class="control-label"></label>
-                <input asp-for="StatusPrescricao" class="form-control" />
-                <span asp-validation-for="StatusPrescricao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReacoesAdversas" class="control-label"></label>
-                <input asp-for="ReacoesAdversas" class="form-control" />
-                <span asp-validation-for="ReacoesAdversas" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+    <form asp-action="Edit">
+        <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden">
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <!-- Cabeçalho -->
+            <div class="p-6 md:p-8 border-b border-gray-800/60 text-center">
+                <h1 class="text-2xl md:text-3xl font-bold">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">
+                        @ViewData["Title"]
+                    </span>
+                </h1>
+                <p class="mt-2 text-lg text-gray-400">Prescrito por: @profissionalNome</p>
+            </div>
+
+            <!-- Corpo do Formulário -->
+            <div class="p-6 md:p-8 space-y-6">
+
+                <div asp-validation-summary="ModelOnly" class="text-red-400 bg-red-500/10 p-4 rounded-lg text-sm space-y-1"></div>
+
+                @* Campos ocultos *@
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="AtendimentoId" />
+                <input type="hidden" asp-for="ProfissionalId" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <div class="md:col-span-2">
+                        <label asp-for="Medicamento" class="block text-sm font-medium text-gray-300 mb-1">Medicamento</label>
+                        <input asp-for="Medicamento" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="Medicamento" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Dosagem" class="block text-sm font-medium text-gray-300 mb-1">Dosagem</label>
+                        <input asp-for="Dosagem" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500" />
+                        <span asp-validation-for="Dosagem" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Frequencia" class="block text-sm font-medium text-gray-300 mb-1">Frequência</label>
+                        <input asp-for="Frequencia" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500" />
+                        <span asp-validation-for="Frequencia" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="ViaAdministracao" class="block text-sm font-medium text-gray-300 mb-1">Via de Administração</label>
+                        <input asp-for="ViaAdministracao" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500" />
+                        <span asp-validation-for="ViaAdministracao" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DataInicio" class="block text-sm font-medium text-gray-300 mb-1">Data de Início</label>
+                        <input asp-for="DataInicio" type="datetime-local" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="DataInicio" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DataFim" class="block text-sm font-medium text-gray-300 mb-1">Data de Término (opcional)</label>
+                        <input asp-for="DataFim" type="datetime-local" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                        <span asp-validation-for="DataFim" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="StatusPrescricao" class="block text-sm font-medium text-gray-300 mb-1">Status da Prescrição</label>
+                        <select asp-for="StatusPrescricao" asp-items="Html.GetEnumSelectList<StatusPrescricao>()" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"></select>
+                        <span asp-validation-for="StatusPrescricao" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="Observacoes" class="block text-sm font-medium text-gray-300 mb-1">Observações</label>
+                        <textarea asp-for="Observacoes" rows="3" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                        <span asp-validation-for="Observacoes" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="ReacoesAdversas" class="block text-sm font-medium text-gray-300 mb-1">Reações Adversas (se houver)</label>
+                        <textarea asp-for="ReacoesAdversas" rows="2" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                        <span asp-validation-for="ReacoesAdversas" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center">
+                <a asp-controller="Atendimentoes" asp-action="Details" asp-route-id="@Model.AtendimentoId"
+                   class="inline-flex items-center text-gray-300 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Cancelar
+                </a>
+                <input type="submit" value="Salvar Alterações"
+                       class="cursor-pointer bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all" />
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

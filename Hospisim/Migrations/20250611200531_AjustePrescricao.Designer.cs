@@ -4,6 +4,7 @@ using Hospisim.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hospisim.Migrations
 {
     [DbContext(typeof(HospisimContext))]
-    partial class HospisimContextModelSnapshot : ModelSnapshot
+    [Migration("20250611200531_AjustePrescricao")]
+    partial class AjustePrescricao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,8 +274,9 @@ namespace Hospisim.Migrations
                     b.Property<string>("ReacoesAdversas")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StatusPrescricao")
-                        .HasColumnType("int");
+                    b.Property<string>("StatusPrescricao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ViaAdministracao")
                         .IsRequired()

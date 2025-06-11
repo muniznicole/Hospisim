@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hospisim.Models.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hospisim.Models
@@ -9,10 +10,10 @@ namespace Hospisim.Models
         public Guid Id { get; set; }
 
         public Guid AtendimentoId { get; set; }
-        public Atendimento Atendimento { get; set; }
+        public Atendimento? Atendimento { get; set; }
 
         public Guid ProfissionalId { get; set; }
-        public Profissional Profissional { get; set; }
+        public Profissional? Profissional { get; set; }
 
         public string Medicamento { get; set; }
         public string Dosagem { get; set; }       // Ex: 500mg
@@ -21,7 +22,7 @@ namespace Hospisim.Models
         public DateTime DataInicio { get; set; }
         public DateTime? DataFim { get; set; }
         public string Observacoes { get; set; }
-        public string StatusPrescricao { get; set; } // Ativa, suspensa, encerrada
+        public StatusPrescricao StatusPrescricao { get; set; } // Ativa, suspensa, encerrada
         public string? ReacoesAdversas { get; set; }
     }
 }
