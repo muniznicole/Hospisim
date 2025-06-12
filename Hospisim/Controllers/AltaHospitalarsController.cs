@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Hospisim.Data;
 using Hospisim.Models;
+using Hospisim.Models.Enums;
 
 namespace Hospisim.Controllers
 {
@@ -29,75 +28,100 @@ namespace Hospisim.Controllers
         // GET: AltaHospitalars/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var altaHospitalar = await _context.AltasHospitalares
                 .Include(a => a.Internacao)
+                .ThenInclude(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (altaHospitalar == null)
-            {
-                return NotFound();
-            }
+
+            if (altaHospitalar == null) return NotFound();
 
             return View(altaHospitalar);
         }
 
-        // GET: AltaHospitalars/Create
-        public IActionResult Create()
+        // GET: AltaHospitalars/Create?internacaoId=...
+        public async Task<IActionResult> Create(Guid internacaoId)
         {
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id");
-            return View();
+            var internacao = await _context.Internacoes
+                .Include(i => i.Paciente)
+                .Include(i => i.Atendimento)
+                .FirstOrDefaultAsync(i => i.Id == internacaoId);
+
+            if (internacao == null) return NotFound();
+
+            ViewBag.PacienteNome = internacao.Paciente?.NomeCompleto;
+            ViewBag.AtendimentoId = internacao.AtendimentoId;
+            ViewBag.InternacaoId = internacao.Id;
+
+            return View(new AltaHospitalar
+            {
+                InternacaoId = internacao.Id,
+                Data = DateTime.Now
+            });
         }
 
         // POST: AltaHospitalars/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InternacaoId,Data,CondicaoPaciente,InstrucoesPosAlta")] AltaHospitalar altaHospitalar)
+        public async Task<IActionResult> Create([Bind("InternacaoId,Data,CondicaoPaciente,InstrucoesPosAlta")] AltaHospitalar altaHospitalar)
         {
             if (ModelState.IsValid)
             {
                 altaHospitalar.Id = Guid.NewGuid();
-                _context.Add(altaHospitalar);
+
+                var internacao = await _context.Internacoes
+                    .Include(i => i.Atendimento)
+                    .FirstOrDefaultAsync(i => i.Id == altaHospitalar.InternacaoId);
+
+                if (internacao == null || internacao.Atendimento == null)
+                    return NotFound();
+
+                // Atualiza status da internação e atendimento
+                internacao.StatusInternacao = StatusInternacao.AltaConcedida;
+                internacao.Atendimento.Status = StatusAtendimento.Finalizado;
+
+                _context.AltasHospitalares.Add(altaHospitalar);
+                _context.Update(internacao);
+                _context.Update(internacao.Atendimento);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Details", "Atendimentoes", new { id = internacao.AtendimentoId });
             }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+
+            // Se cair aqui, precisa preencher as ViewBags novamente para reexibir a view corretamente
+            var internacaoErro = await _context.Internacoes
+                .Include(i => i.Paciente)
+                .Include(i => i.Atendimento)
+                .FirstOrDefaultAsync(i => i.Id == altaHospitalar.InternacaoId);
+
+            if (internacaoErro != null)
+            {
+                ViewBag.PacienteNome = internacaoErro.Paciente?.NomeCompleto;
+                ViewBag.AtendimentoId = internacaoErro.AtendimentoId;
+                ViewBag.InternacaoId = internacaoErro.Id;
+            }
+
             return View(altaHospitalar);
         }
 
         // GET: AltaHospitalars/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var altaHospitalar = await _context.AltasHospitalares.FindAsync(id);
-            if (altaHospitalar == null)
-            {
-                return NotFound();
-            }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+            if (altaHospitalar == null) return NotFound();
+
             return View(altaHospitalar);
         }
 
         // POST: AltaHospitalars/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,InternacaoId,Data,CondicaoPaciente,InstrucoesPosAlta")] AltaHospitalar altaHospitalar)
         {
-            if (id != altaHospitalar.Id)
-            {
-                return NotFound();
-            }
+            if (id != altaHospitalar.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -108,36 +132,27 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AltaHospitalarExists(altaHospitalar.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AltaHospitalarExists(altaHospitalar.Id)) return NotFound();
+                    else throw;
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Details", "Atendimentoes", new { id = altaHospitalar.Internacao?.AtendimentoId });
             }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+
             return View(altaHospitalar);
         }
 
         // GET: AltaHospitalars/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var altaHospitalar = await _context.AltasHospitalares
                 .Include(a => a.Internacao)
+                .ThenInclude(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (altaHospitalar == null)
-            {
-                return NotFound();
-            }
+
+            if (altaHospitalar == null) return NotFound();
 
             return View(altaHospitalar);
         }
@@ -147,13 +162,30 @@ namespace Hospisim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var altaHospitalar = await _context.AltasHospitalares.FindAsync(id);
-            if (altaHospitalar != null)
+            var alta = await _context.AltasHospitalares
+                .Include(a => a.Internacao)
+                .ThenInclude(i => i.Atendimento)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (alta != null)
             {
-                _context.AltasHospitalares.Remove(altaHospitalar);
+                // Reverte status de atendimento e internação
+                if (alta.Internacao != null)
+                {
+                    alta.Internacao.StatusInternacao = StatusInternacao.Ativa;
+                    if (alta.Internacao.Atendimento != null)
+                        alta.Internacao.Atendimento.Status = StatusAtendimento.EmAndamento;
+
+                    _context.Update(alta.Internacao);
+                    _context.Update(alta.Internacao.Atendimento);
+                }
+
+                _context.AltasHospitalares.Remove(alta);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", "Atendimentoes", new { id = alta.Internacao.AtendimentoId });
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -56,7 +56,8 @@ namespace Hospisim.Controllers
             ViewBag.ProfissionalId = new SelectList(
                 _context.Profissionais
                     .Include(p => p.Especialidade)
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         p.Id,
                         NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
                     }).ToList(),
@@ -96,7 +97,8 @@ namespace Hospisim.Controllers
             ViewBag.ProfissionalId = new SelectList(
                 _context.Profissionais
                     .Include(p => p.Especialidade)
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         p.Id,
                         NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
                     }).ToList(),
@@ -156,7 +158,8 @@ namespace Hospisim.Controllers
             ViewBag.ProfissionalId = new SelectList(
                 _context.Profissionais
                     .Include(p => p.Especialidade)
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         p.Id,
                         NomeCompleto = p.NomeCompleto + " - " + p.Especialidade.Nome
                     }).ToList(),
@@ -181,6 +184,7 @@ namespace Hospisim.Controllers
                     .ThenInclude(p => p.Profissional)
                  .Include(a => a.Exames)
                  .Include(a => a.Internacao)
+                    .ThenInclude(i => i.AltaHospitalar)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (atendimento == null) return NotFound();
@@ -234,6 +238,26 @@ namespace Hospisim.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finalizar(Guid id)
+        {
+            var atendimento = await _context.Atendimentos.FindAsync(id);
+            if (atendimento == null)
+                return NotFound();
+
+            if (atendimento.Tipo == TipoAtendimento.Consulta || atendimento.Tipo == TipoAtendimento.Emergencia)
+            {
+                atendimento.Status = StatusAtendimento.Finalizado;
+                _context.Update(atendimento);
+                await _context.SaveChangesAsync();
+                TempData["MensagemSucesso"] = "Atendimento finalizado com sucesso.";
+            }
+
+            return RedirectToAction("Details", new { id });
+        }
+
+
         // GET: Atendimentoes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -253,31 +277,56 @@ namespace Hospisim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var internacao = await _context.Internacoes
-                   .Include(i => i.Atendimento)
-                   .FirstOrDefaultAsync(i => i.Id == id);
+            var atendimento = await _context.Atendimentos
+                .Include(a => a.Internacao)
+                    .ThenInclude(i => i.AltaHospitalar)
+                .Include(a => a.Prescricoes)
+                .Include(a => a.Exames)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (internacao != null)
+            if (atendimento != null)
             {
-                // Se a internação existe, remova
-                _context.Internacoes.Remove(internacao);
+                // Remover alta e internação se existirem
+                if (atendimento.Internacao?.AltaHospitalar != null)
+                    _context.AltasHospitalares.Remove(atendimento.Internacao.AltaHospitalar);
 
-                // Reverter o tipo de atendimento para Consulta
-                if (internacao.Atendimento != null)
-                {
-                    internacao.Atendimento.Tipo = TipoAtendimento.Consulta;
-                    _context.Atendimentos.Update(internacao.Atendimento);
-                }
+                if (atendimento.Internacao != null)
+                    _context.Internacoes.Remove(atendimento.Internacao);
+
+                // Remover prescrições
+                if (atendimento.Prescricoes != null && atendimento.Prescricoes.Any())
+                    _context.Prescricoes.RemoveRange(atendimento.Prescricoes);
+
+                // Remover exames
+                if (atendimento.Exames != null && atendimento.Exames.Any())
+                    _context.Exames.RemoveRange(atendimento.Exames);
+
+                // Remover o atendimento
+                _context.Atendimentos.Remove(atendimento);
 
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Details", "Atendimentoes", new { id = internacao.AtendimentoId });
+            return RedirectToAction("PorProntuario", new { prontuarioId = atendimento?.ProntuarioId });
         }
-
         private bool AtendimentoExists(Guid id)
         {
             return _context.Atendimentos.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> PainelPrioridades()
+        {
+            var atendimentos = await _context.Atendimentos
+                .Include(a => a.Prontuario)
+                    .ThenInclude(p => p.Paciente)
+                .Include(a => a.Profissional)
+                .Where(a => a.Status == StatusAtendimento.EmAndamento)
+                .OrderByDescending(a => a.DataHora)
+                .ToListAsync();
+
+            return View(atendimentos);
+        }
+
+
     }
 }

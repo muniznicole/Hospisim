@@ -1,47 +1,91 @@
 ﻿@model Hospisim.Models.AltaHospitalar
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registrar Alta Hospitalar";
+    var pacienteNome = ViewBag.PacienteNome;
+    var atendimentoId = ViewBag.AtendimentoId;
+    var internacaoId = ViewBag.InternacaoId;
 }
 
-<h1>Create</h1>
+<!-- Container principal que se alinha com o layout geral -->
+<div class="w-full max-w-4xl mx-auto px-4 py-16 sm:py-24">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="text-red-400 bg-red-900/20 p-4 mb-4 rounded-lg">
+            <strong>ModelState inválido:</strong>
+            <ul>
+                @foreach (var entry in ViewData.ModelState)
+                {
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        <li><strong>@entry.Key:</strong> @error.ErrorMessage</li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+    <form asp-action="Create">
+        <div class="bg-gray-900/50 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden">
 
-<h4>AltaHospitalar</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="InternacaoId" class="control-label"></label>
-                <select asp-for="InternacaoId" class ="form-control" asp-items="ViewBag.InternacaoId"></select>
+            <!-- Cabeçalho -->
+            <div class="p-6 md:p-8 border-b border-gray-800/60 text-center">
+                <h1 class="text-2xl md:text-3xl font-bold">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+                        @ViewData["Title"]
+                    </span>
+                </h1>
+                <p class="mt-2 text-lg text-gray-400">Paciente: @pacienteNome</p>
             </div>
-            <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CondicaoPaciente" class="control-label"></label>
-                <input asp-for="CondicaoPaciente" class="form-control" />
-                <span asp-validation-for="CondicaoPaciente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InstrucoesPosAlta" class="control-label"></label>
-                <input asp-for="InstrucoesPosAlta" class="form-control" />
-                <span asp-validation-for="InstrucoesPosAlta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <!-- Corpo do Formulário -->
+            <div class="p-6 md:p-8 space-y-6">
+
+                <div asp-validation-summary="ModelOnly" class="text-red-400 bg-red-500/10 p-4 rounded-lg text-sm space-y-1"></div>
+
+                @* Campo oculto para o ID da Internação *@
+                <input type="hidden" asp-for="InternacaoId" value="@internacaoId" />
+
+                <div class="grid grid-cols-1 gap-6">
+
+                    <div>
+                        <label asp-for="Data" class="block text-sm font-medium text-gray-300 mb-1">Data da Alta</label>
+                        <input asp-for="Data" type="datetime-local" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                        <span asp-validation-for="Data" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="CondicaoPaciente" class="block text-sm font-medium text-gray-300 mb-1">Condição do Paciente na Saída</label>
+                        <textarea asp-for="CondicaoPaciente" rows="3" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Descreva o estado de saúde do paciente no momento da alta"></textarea>
+                        <span asp-validation-for="CondicaoPaciente" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="InstrucoesPosAlta" class="block text-sm font-medium text-gray-300 mb-1">Instruções e Orientações Pós-Alta</label>
+                        <textarea asp-for="InstrucoesPosAlta" rows="4" class="w-full bg-gray-800/60 border border-gray-700/80 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Medicação contínua, repouso, retorno para consulta, etc."></textarea>
+                        <span asp-validation-for="InstrucoesPosAlta" class="mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="p-6 md:p-8 bg-gray-900/30 flex justify-between items-center">
+                <a asp-controller="Atendimentoes" asp-action="Details" asp-route-id="@atendimentoId"
+                   class="inline-flex items-center text-gray-300 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Cancelar
+                </a>
+                <input type="submit" value="Confirmar Alta"
+                       class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all" />
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

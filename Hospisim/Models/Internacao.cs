@@ -42,7 +42,7 @@ namespace Hospisim.Models
         public StatusInternacao StatusInternacao { get; set; } = StatusInternacao.Ativa; // Ativa, Alta concedida, Transferido, Óbito
 
         [ValidateNever]
-        public AltaHospitalar AltaHospitalar { get; set; }
+        public AltaHospitalar? AltaHospitalar { get; set; }
     }
 }
 
