@@ -10,6 +10,14 @@ builder.Services.AddDbContext<HospisimContext>(options =>
 
 var app = builder.Build();
 
+// Chamada do seed de dados
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<HospisimContext>();
+    DbInitializer.Initialize(context);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
