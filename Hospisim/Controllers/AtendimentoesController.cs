@@ -179,7 +179,7 @@ namespace Hospisim.Controllers
                     .ThenInclude(p => p.Paciente)
                 .Include(a => a.Prescricoes)
                     .ThenInclude(p => p.Profissional)
-                .Include(a => a.Exames)
+                 .Include(a => a.Exames)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (atendimento == null) return NotFound();
@@ -189,6 +189,33 @@ namespace Hospisim.Controllers
 
             return View(atendimento);
         }
+
+        // POST: Atendimentoes/EvoluirParaEmergencia/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EvoluirParaEmergencia(Guid id)
+        {
+            var atendimento = await _context.Atendimentos.FindAsync(id);
+            if (atendimento == null)
+            {
+                return NotFound();
+            }
+
+            if (atendimento.Tipo == TipoAtendimento.Consulta)
+            {
+                atendimento.Tipo = TipoAtendimento.Emergencia;
+                _context.Update(atendimento);
+                await _context.SaveChangesAsync();
+                TempData["MensagemSucesso"] = "Atendimento evoluído para Emergência com sucesso.";
+            }
+            else
+            {
+                TempData["MensagemErro"] = "Somente atendimentos do tipo Consulta podem ser evoluídos.";
+            }
+
+            return RedirectToAction("Details", new { id = atendimento.Id });
+        }
+
 
 
         // GET: Atendimentoes/Delete/5

@@ -74,12 +74,14 @@
                     <!-- Ações de Evolução (Aparecem apenas em Consulta) -->
                     @if (Model.Tipo == TipoAtendimento.Consulta)
                     {
-                        <a asp-action="EvoluirParaEmergencia" asp-route-id="@Model.Id" class="flex flex-col items-center justify-center p-4 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg text-center transition-colors">
-                            <svg class="h-8 w-8 text-yellow-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            <span class="text-sm font-medium text-yellow-300">Evoluir para Emergência</span>
-                        </a>
+                        <form asp-action="EvoluirParaEmergencia" asp-route-id="@Model.Id" method="post" class="contents">
+                            <button type="submit" class="flex flex-col items-center justify-center p-4 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg text-center transition-colors w-full">
+                                <svg class="h-8 w-8 text-yellow-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span class="text-sm font-medium text-yellow-300">Evoluir para Emergência</span>
+                            </button>
+                        </form>
                         <a asp-controller="Internacoes" asp-action="Create" asp-route-atendimentoId="@Model.Id" class="flex flex-col items-center justify-center p-4 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-center transition-colors">
                             <svg class="h-8 w-8 text-red-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
