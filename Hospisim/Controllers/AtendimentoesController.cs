@@ -180,6 +180,7 @@ namespace Hospisim.Controllers
                 .Include(a => a.Prescricoes)
                     .ThenInclude(p => p.Profissional)
                  .Include(a => a.Exames)
+                 .Include(a => a.Internacao)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (atendimento == null) return NotFound();
@@ -216,7 +217,22 @@ namespace Hospisim.Controllers
             return RedirectToAction("Details", new { id = atendimento.Id });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReverterParaConsulta(Guid id)
+        {
+            var atendimento = await _context.Atendimentos.FindAsync(id);
 
+            if (atendimento != null && atendimento.Tipo == TipoAtendimento.Emergencia)
+            {
+                atendimento.Tipo = TipoAtendimento.Consulta;
+                _context.Update(atendimento);
+                await _context.SaveChangesAsync();
+                TempData["MensagemSucesso"] = "Emergência revertida para Consulta.";
+            }
+
+            return RedirectToAction("Details", new { id });
+        }
 
         // GET: Atendimentoes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
@@ -237,14 +253,26 @@ namespace Hospisim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var atendimento = await _context.Atendimentos.FindAsync(id);
-            if (atendimento != null)
+            var internacao = await _context.Internacoes
+                   .Include(i => i.Atendimento)
+                   .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (internacao != null)
             {
-                _context.Atendimentos.Remove(atendimento);
+                // Se a internação existe, remova
+                _context.Internacoes.Remove(internacao);
+
+                // Reverter o tipo de atendimento para Consulta
+                if (internacao.Atendimento != null)
+                {
+                    internacao.Atendimento.Tipo = TipoAtendimento.Consulta;
+                    _context.Atendimentos.Update(internacao.Atendimento);
+                }
+
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("PorProntuario", new { prontuarioId = atendimento.ProntuarioId });
+            return RedirectToAction("Details", "Atendimentoes", new { id = internacao.AtendimentoId });
         }
 
         private bool AtendimentoExists(Guid id)
